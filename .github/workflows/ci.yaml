@@ -43,6 +43,8 @@ jobs:
 
       # Build apk.
       - run: flutter build apk --release
+      - run: cd build/app/outputs/apk/release
+      - run: zip -m release.zip  app-release.apk  
 
       # Upload generated apk to the artifacts.
       - uses: actions/upload-artifact@v1
@@ -73,6 +75,6 @@ jobs:
           # Optional plain body:
           body: Build job of ${{github.repository}} completed successfully!
 
-          attachments: build/app/outputs/apk/release/app-release.apk
+          attachments: build/app/outputs/apk/release/release.zip
           # Optional priority: 'high', 'normal' (default) or 'low'
           # priority: low
