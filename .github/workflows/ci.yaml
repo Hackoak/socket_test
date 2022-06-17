@@ -55,13 +55,13 @@ jobs:
         uses: dawidd6/action-send-mail@v3
         with:
           # Required mail server address:
-          server_address: smtp.office365.com
+          server_address: smtp.gmail.com
           # Required mail server port:
-          server_port: 587
+          server_port: 465
           # Optional (recommended): mail server username:
-          username: harikrishnan.r@harvestinfosoft.com
+          username: test.hari.v1@gmail.com
           # Optional (recommended) mail server password:
-          password: "#^R!@45279"
+          password: Pass@1234
           # Required mail subject:
           subject: Github Actions job result
           # Required recipients' addresses:
