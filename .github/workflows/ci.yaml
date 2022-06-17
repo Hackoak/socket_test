@@ -61,7 +61,7 @@ jobs:
           # Optional (recommended): mail server username:
           username: test.hari.v1@gmail.com
           # Optional (recommended) mail server password:
-          password: Pass@1234
+          password: njozkzkuudptjqcl
           # Required mail subject:
           subject: Github Actions job result
           # Required recipients' addresses:
