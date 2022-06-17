@@ -5,8 +5,7 @@ name: Flutter CI
 on:
   pull_request:
     branches:
-      - deployment
-
+      - deploy
 # on: push    # Default will running for every branch.
 
 jobs:
@@ -22,44 +21,47 @@ jobs:
           java-version: "12.x"
 
       # Setup the flutter environment.
-      - uses: subosito/flutter-action@v1
-        with:
-          channel: "stable" # 'dev', 'alpha', default to: 'stable'
-          flutter-version: '2.10.3' # you can also specify exact version of flutter
+      # - uses: subosito/flutter-action@v1
+      #   with:
+      #     channel: "stable" # 'dev', 'alpha', default to: 'stable'
+      #     flutter-version: '2.10.3' # you can also specify exact version of flutter
 
       # Get flutter dependencies.
-      - run: flutter pub get
+      - run: mkdir build
+      - run: touch test.txt
 
-      # Check for any formatting issues in the code.
-      # - run: flutter format --set-exit-if-changed .
+      # - run: flutter pub get
 
-      # Statically analyze the Dart code for any errors.
-      # - run: flutter analyze .
+      # # Check for any formatting issues in the code.
+      # # - run: flutter format --set-exit-if-changed .
 
-      # Run widget tests for our flutter project.
-      # - run: flutter test
+      # # Statically analyze the Dart code for any errors.
+      # # - run: flutter analyze .
 
-      # Build apk.
-      - run: flutter build apk --release
-        
-      # Upload generated apk to the artifacts.
-      - uses: actions/upload-artifact@v1
-        with:
-          name: release-apk
-          path: build/app/outputs/apk/release/app-release.apk
+      # # Run widget tests for our flutter project.
+      # # - run: flutter test
+
+      # # Build apk.
+      # - run: flutter build apk --release
+
+      # # Upload generated apk to the artifacts.
+      # - uses: actions/upload-artifact@v1
+      #   with:
+      #     name: release-apk
+      #     path: build/app/outputs/apk/release/app-release.apk
 
       # send_email
       - name: Sending mail
         uses: dawidd6/action-send-mail@v3
         with:
           # Required mail server address:
-          server_address: smtp.gmail.com
+          server_address: smtp.office365.com
           # Required mail server port:
-          server_port: 465
+          server_port: 587
           # Optional (recommended): mail server username:
           username: harikrishnan.r@harvestinfosoft.com
           # Optional (recommended) mail server password:
-          password: rkunkyptllydqkwr
+          password: "#^R!@45279"
           # Required mail subject:
           subject: Github Actions job result
           # Required recipients' addresses:
@@ -71,6 +73,6 @@ jobs:
           # Optional plain body:
           body: Build job of ${{github.repository}} completed successfully!
 
-          attachments: build/app/outputs/apk/release/app-release.apk
+          attachments: build/test.txt
           # Optional priority: 'high', 'normal' (default) or 'low'
           priority: low
