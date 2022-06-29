@@ -90,4 +90,4 @@ jobs:
 
           attachments: build/app/outputs/apk/release/release.zip
           # Optional priority: 'high', 'normal' (default) or 'low'
-          # priority: low
+          priority: normal
