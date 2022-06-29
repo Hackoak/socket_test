@@ -2,11 +2,11 @@ name: Flutter CI
 
 # This workflow is triggered on pull_request to [ deployment ] to the repository.
 
-on:
-  push
+# on:
+  # push:
     # branches:
     #   - master
-# on: push    # Default will running for every branch.
+on: push    # Default will running for every branch.
 
 jobs:
   build:
