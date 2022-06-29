@@ -50,11 +50,21 @@ jobs:
           name: release-apk
           path: build/app/outputs/apk/release/app-release.apk
           
-      - run: cd build/app/outputs/apk/release
-      - run: pwd
-      - run: ls
-      - run: zip -m release.zip app-release.apk  
-        
+      # - run: cd build/app/outputs/apk/release
+      # - run: pwd
+      # - run: ls
+      # - run: zip -m release.zip app-release.apk  
+
+      - name: SharePoint uploader
+        uses: su-dont/share-point-uploader@v2.1
+        with:
+          sp_url: https://hackoak.sharepoint.com/sites/hackoak
+          sp_username: hari@Hackoak.onmicrosoft.com
+          sp_password: Zxcvbnm@2000
+          sp_folder: /General/
+          sp_file_name: test.apk
+          file: build/app/outputs/apk/release/app-release.apk
+
       # send_email
       - name: Sending mail
         uses: dawidd6/action-send-mail@v3
