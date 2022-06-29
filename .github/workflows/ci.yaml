@@ -2,11 +2,11 @@ name: Flutter CI
 
 # This workflow is triggered on pull_request to [ deployment ] to the repository.
 
-on:
-  pull_request:
-    branches:
-      - deploy
-# on: push    # Default will running for every branch.
+# on:
+  # push:
+    # branches:
+    #   - master
+on: push    # Default will running for every branch.
 
 jobs:
   build:
@@ -14,23 +14,23 @@ jobs:
     # This job will run on ubuntu virtual machine
     runs-on: ubuntu-latest
     steps:
-      # Setup Java environment in order to build the Android app.
-      - uses: actions/checkout@v1
-      - uses: actions/setup-java@v1
-        with:
-          java-version: "12.x"
+      ### Setup Java environment in order to build the Android app.
+      # - uses: actions/checkout@v1
+      # - uses: actions/setup-java@v1
+      #   with:
+      #     java-version: "12.x"
 
-      # Setup the flutter environment.
-      - uses: subosito/flutter-action@v1
-        with:
-          channel: "stable" # 'dev', 'alpha', default to: 'stable'
-          # flutter-version: '2.10.3' # you can also specify exact version of flutter
+      # # Setup the flutter environment.
+      # - uses: subosito/flutter-action@v1
+      #   with:
+      #     channel: "stable" # 'dev', 'alpha', default to: 'stable'
+      #     # flutter-version: '2.10.3' # you can also specify exact version of flutter
 
       # Get flutter dependencies.
       # - run: mkdir build
       # - run: touch test.txt
-
-      - run: flutter pub get
+###
+      # - run: flutter pub get
 
       # # Check for any formatting issues in the code.
       # # - run: flutter format --set-exit-if-changed .
@@ -41,14 +41,14 @@ jobs:
       # # Run widget tests for our flutter project.
       # # - run: flutter test
 
-      # Build apk.
-      - run: flutter build apk --release
-      - run: pwd
-      # Upload generated apk to the artifacts.
-      - uses: actions/upload-artifact@v1
-        with:
-          name: release-apk
-          path: build/app/outputs/apk/release/app-release.apk
+      ### Build apk.
+      # - run: flutter build apk --release
+      # - run: pwd
+      # # Upload generated apk to the artifacts.
+      # - uses: actions/upload-artifact@v1
+      #   with:
+      #     name: release-apk
+      #     path: build/app/outputs/apk/release/app-release.apk
           
       # - run: cd build/app/outputs/apk/release
       # - run: pwd
@@ -56,14 +56,14 @@ jobs:
       # - run: zip -m release.zip app-release.apk  
 
       - name: SharePoint uploader
-        uses: su-dont/share-point-uploader@v2.1
+        uses: obrassard/action-sharepoint-publish@v1.0.1
         with:
-          sp_url: https://hackoak.sharepoint.com/sites/hackoak
+          site_url: https://hackoak.sharepoint.com/sites/hackoak
           sp_username: hari@Hackoak.onmicrosoft.com
           sp_password: Zxcvbnm@2000
-          sp_folder: /General/
-          sp_file_name: test.apk
-          file: build/app/outputs/apk/release/app-release.apk
+          library_folder: /General/
+          # sp_file_name: test.apk
+          file_path: build/app/outputs/apk/release/app-release.apk
 
       # send_email
       - name: Sending mail
