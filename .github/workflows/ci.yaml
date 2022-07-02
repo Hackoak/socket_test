@@ -50,7 +50,7 @@ jobs:
           echo "::set-output name=release_apk::release.apk" 
       # Upload generated apk to the artifacts.
       - name: upload-artifact
-      - uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v1
         with:
           name: release-apk
           path: release.apk
