@@ -1,71 +1,79 @@
-name: Flutter CI
+name: Flutter Apk CI
 
-# This workflow is triggered on pull_request to [ deployment ] to the repository.
-
-# on:
-  # push:
-    # branches:
-    #   - master
-on: push    # Default will running for every branch.
+# This workflow is triggered on pull_request to [ master ] to the repository.
+on:
+  push:
+    # Sequence of patterns matched against refs/heads
+    branches:
+      - master
+    # Sequence of patterns matched against refs/tags
+    tags:
+      - v*
 
 jobs:
   build:
-    name: Build the release-apk
+    name: Building the Apk
     # This job will run on ubuntu virtual machine
     runs-on: ubuntu-latest
     steps:
-      ### Setup Java environment in order to build the Android app.
-      # - uses: actions/checkout@v1
-      # - uses: actions/setup-java@v1
-      #   with:
-      #     java-version: "12.x"
+      # Setup Java environment in order to build the Android app.
+      - uses: actions/checkout@v1
+      - uses: actions/setup-java@v1
+        with:
+          java-version: "12.x"
 
-      # # Setup the flutter environment.
-      # - uses: subosito/flutter-action@v1
-      #   with:
-      #     channel: "stable" # 'dev', 'alpha', default to: 'stable'
-      #     # flutter-version: '2.10.3' # you can also specify exact version of flutter
+      # Setup the flutter environment.
+      - uses: subosito/flutter-action@v1
+        with:
+          channel: "stable" # 'dev', 'alpha', default to: 'stable'
+          flutter-version: "2.10.3" # you can also specify exact version of flutter
 
       # Get flutter dependencies.
-      # - run: mkdir build
-      # - run: touch test.txt
-###
-      # - run: flutter pub get
+      - run: flutter pub get
 
-      # # Check for any formatting issues in the code.
-      # # - run: flutter format --set-exit-if-changed .
+      #! [ IF NEEDED ] Statically analyze the Dart code for any errors.
+      # - run: flutter analyze .
 
-      # # Statically analyze the Dart code for any errors.
-      # # - run: flutter analyze .
+      #! [ IF NEEDED ] Run widget tests for our flutter project.
+      # - run: flutter test
 
-      # # Run widget tests for our flutter project.
-      # # - run: flutter test
+      ## Build apk.
+      - run: flutter build apk --release
 
-      ### Build apk.
-      # - run: flutter build apk --release
-      # - run: pwd
-      # # Upload generated apk to the artifacts.
-      # - uses: actions/upload-artifact@v1
-      #   with:
-      #     name: release-apk
-      #     path: build/app/outputs/apk/release/app-release.apk
-          
-      # - run: cd build/app/outputs/apk/release
-      # - run: pwd
-      # - run: ls
-      # - run: zip -m release.zip app-release.apk  
-
-      - name: SharePoint uploader
-        uses: obrassard/action-sharepoint-publish@v1.0.1
+      # Upload generated apk to the artifacts.
+      - uses: actions/upload-artifact@v1
         with:
-          site_url: https://hackoak.sharepoint.com/sites/hackoak
-          sp_username: hari@Hackoak.onmicrosoft.com
-          sp_password: Zxcvbnm@2000
-          library_folder: /General/
-          # sp_file_name: test.apk
-          file_path: build/app/outputs/apk/release/app-release.apk
+          name: release-apk
+          path: build/app/outputs/apk/release/app-release.apk
 
-      # send_email
+      # file_path: build/app/outputs/apk/release/app-release.apk
+
+  upload:
+    name: Uploading the Apk
+    needs: build
+    # This job will run on ubuntu virtual machine
+    runs-on: ubuntu-latest
+    steps:
+      - name: Upload Apk to Google Drive
+        uses: Hackoak/g-drive-upload-and-gel-link-action@tonest
+        id: driveUpload
+        with:
+          # use file.txt for upload a file or user the path/tofolder to upload a folder
+          target: build/app/outputs/apk/release/app-release.apk
+          credentials: "ewogICJ0eXBlIjogInNlcnZpY2VfYWNjb3VudCIsCiAgInByb2plY3RfaWQiOiAidXBsb2FkLWRyaXZlLTM1NDgxNiIsCiAgInByaXZhdGVfa2V5X2lkIjogIjZiODlhYTI5ZWNjZDAxNjU3YWZjNzg5ZDg3NzNmNDljNmYzZTEyZjQiLAogICJwcml2YXRlX2tleSI6ICItLS0tLUJFR0lOIFBSSVZBVEUgS0VZLS0tLS1cbk1JSUV2UUlCQURBTkJna3Foa2lHOXcwQkFRRUZBQVNDQktjd2dnU2pBZ0VBQW9JQkFRQzZYaUMyTTdxcE9Td0tcbk1xanBJTFVQcm9WWWptNzNwY2RzTHNTNW01MU45RTYrWnFBQ1NzR2pzU2c3dFU0enMwYjVrVUd5TnFjU0hCT29cbnI5Q0lWRys1ekpLNGlXSUJkOXlWQm93ZUNON2pQcXRJNk9WNlM4Y1VKczlKWFNQZDhySDlseVpiREZmUGZRdWdcbnlRMDRLUzNIVDRMRVZ0NWZVNS9qNXpacHhVdVFlNXBnVHVXejlvRnRWcnk2S2NidENkQjA4SlV4NFY3Tm1tbXZcbkl6aVR2WTFYTytKL2FLckhnN1NXSThWQWtqdW9IcVhMWW9aenFDRkpiMUNWNzgwU3kwM2lxZ3pJVzl4eE9JMkFcbmJYYkEwbW9lREV0a1cxQVhvYVYzLzJ6MmNadmkzV3laMyt4eG9qRDhCSGNxaDVMbzNvZC90azhrSHlST2ZIWGJcblk4T0hIVityQWdNQkFBRUNnZ0VBSlhWcTVNUlQ5ZFJ3ZGlKRmtnb0phbnY5QUZZc2xxa2pBcXNKem5hcE1QUjBcbmFVK3VSSmVyQVJCSUVtdzRLaXNVRG5CMFFISTh0V2FnU3V6L29JODhINSt2TTlrbE1qOVp2amhoTEY1REVuRFRcbnM2VmdEbXN4dWVxdENrVm13cU1YeEcwL2Y5aGt3K2NSMGNEblg4empEeWI3bFNRU3NSMVpTMUQ3UGxveC9IbUtcbnNmcTlmT2hlUVZXdTJKTm9aVkxwVkZaTklCUXUwV0p0eGRtNHpSUDRObllIaEZhWlg4RWUvOXovYmZoTWEwcnBcblJpeXJYcTVTUkpzbHJYbHpJLzJQTzBZOThWVTJuQ2xyMzNaRlJaWEhuWWdvbE1YMmZ3TWNkZTRJdkV6YWprUklcbnE4YlVBWmpGQi9XT21FR2ZrcVNBa2tXM0ZtbEF1Y0RJbEVBN3Rrb3BXUUtCZ1FEK2dGTEZJb2RZUWRQZTdUekFcbm9DSXJUV1BxcEszN2M4b3JMajdJUU5wcjZVb0hlZng1V01hZnN2MUFFV0ZCSTJKRlNlR0M0N3ErRFpPTmVLVG5cbitIM0ZHT3hObVA3NWFmTHJIajN2OXZPS09hemZUKzVlY2YzZHpMaXk2YUtsQVBSaGhTbnJPbG4ySVBidUJHZUJcblZxdEtZUFVvWHZnczZCWFI3QkRBODNHM0dRS0JnUUM3ZHhhN3pEZG85YVBoeWd0dUtjZm4zamlKQ2dxZ1dxeHBcbjZpRS9BMGRQTldmQlEyK0ZvQmVwR0RUZDdDMU93VmhzcHBZQWtuMHFIaEV1a0tTa0VReFdWRzBBbEpXQ21PSkRcbjhiZEFoRGR6NndZUitTLzJrdnNLZzFHMnRlVmRpR09GTDYwZUlzWUJ6U3pMZ3V1Z3pyQTNwMXFBWTdpSEVhTXpcbmlRRnh5amM1WXdLQmdRQ0QvbjN2TEZkUjJPSlA3bTdoNEt1WUZjMUtkeHFkSFpLdkRvOFZRVDJIVmpsRTQybWtcbmJmeWwreWtKdjNuWFZNaTA4dnA0N2k5K1BvQldrVW5GM2NVdEloMzhxT3NrNUdST3VTS2FnRlFUVHBKd1IzNXpcbmtWOS9WNXc3ZnAwU1F3cDhRWnBhRzZ0bzBmUC93bDBFWWJUNUlJeEY0ZXVKTHQyU1FJTDM3OHI4a1FLQmdCeGNcbmdRRDZmV3VRdGpHRHVzVDQ1emlLSXkyQWFta21McTE3Y1hveUNjalBBSnA1bEZhNENMeFpZQzR1L0EvTktvNk5cbmlXWWV3M2JxdzVpeTQyVzYrbzNaQ2dDcmVnOGZDQ1JWWG04UlViNWswUzlJN3R1MEV1emRQekNRUmxvbk56OUFcbkhrWFA1dnNBeW9VamtuaHFyTGhPeGw5a050ZWdjSHRzZjk1eVJIYVhBb0dBWjBrTUgxMjJpMDdTb1ZONC8vM3BcblYyN0p2TUN0RDE1NlBNeHMwVVk4M3JhdmdDZkpoNmhZTmVBOE9ncUZZWXM4UHFBd1ZFSU5mb3d3ajJSdEdvSC9cbjZkY0d1MHRSSTNXcTl0SWlhS3ByOUxPbWVSNk53RHJiZUpBeU95VTlUdDFXUFNyK0NwYmdXdTlyMVh1SEJkRkNcbnlMcWNjS1BNWXhweG10c3diYnBkcmM0PVxuLS0tLS1FTkQgUFJJVkFURSBLRVktLS0tLVxuIiwKICAiY2xpZW50X2VtYWlsIjogInVwbG9hZC1kcml2ZUB1cGxvYWQtZHJpdmUtMzU0ODE2LmlhbS5nc2VydmljZWFjY291bnQuY29tIiwKICAiY2xpZW50X2lkIjogIjEwNjc2NDU2Mzk3NjI2ODY1Njk2MyIsCiAgImF1dGhfdXJpIjogImh0dHBzOi8vYWNjb3VudHMuZ29vZ2xlLmNvbS9vL29hdXRoMi9hdXRoIiwKICAidG9rZW5fdXJpIjogImh0dHBzOi8vb2F1dGgyLmdvb2dsZWFwaXMuY29tL3Rva2VuIiwKICAiYXV0aF9wcm92aWRlcl94NTA5X2NlcnRfdXJsIjogImh0dHBzOi8vd3d3Lmdvb2dsZWFwaXMuY29tL29hdXRoMi92MS9jZXJ0cyIsCiAgImNsaWVudF94NTA5X2NlcnRfdXJsIjogImh0dHBzOi8vd3d3Lmdvb2dsZWFwaXMuY29tL3JvYm90L3YxL21ldGFkYXRhL3g1MDkvdXBsb2FkLWRyaXZlJTQwdXBsb2FkLWRyaXZlLTM1NDgxNi5pYW0uZ3NlcnZpY2VhY2NvdW50LmNvbSIKfQo="
+          folder: "1LFGzzunBcltnEd5Kx5A2wi-Fu3BvYRj3"
+
+      # Play with the output drive link
+      - name: Play with the output drive link
+        run: echo ${{ steps.driveUpload.outputs.link }}
+
+  #  send_email
+  send_mail:
+    name: Send E-mail
+    # This job will run on ubuntu virtual machine
+    runs-on: ubuntu-latest
+    needs: upload
+    steps:
       - name: Sending mail
         uses: dawidd6/action-send-mail@v3
         with:
@@ -86,8 +94,18 @@ jobs:
           # Optional whether this connection use TLS (default is true if server_port is 465)
           secure: true
           # Optional plain body:
-          body: Build for ${{github.repository}} completed successfully!
+          body: Build for ${{github.repository}} - ${{ steps.driveUpload.outputs.link }} completed successfully!
 
           attachments: build/app/outputs/apk/release/release.zip
           # Optional priority: 'high', 'normal' (default) or 'low'
           priority: normal
+
+  upload_release_version:
+    name: Uploading the Apk
+    runs-on: ubuntu-latest
+    needs: send_mail
+    if: ${{ github.ref_type == 'tag' }}
+    steps:
+      # Play with the output drive link
+      - name: Play with the output drive link
+        run: echo ${{ steps.driveUpload.outputs.link }}
