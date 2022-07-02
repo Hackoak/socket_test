@@ -62,7 +62,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Upload Apk to Google Drive
-      - uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v3
         with:
           name: release-apk
       - name: Upload Apk to Google Drive
