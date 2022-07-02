@@ -15,56 +15,50 @@ jobs:
     name: Building the Apk
     # This job will run on ubuntu virtual machine
     runs-on: ubuntu-latest
-    outputs:
-      release_apk: ${{ steps.build_step.outputs.release_apk }}
+    
     steps:
       # Setup Java environment in order to build the Android app.
-      # - uses: actions/checkout@v1
-      # - uses: actions/setup-java@v1
-      #   with:
-      #     java-version: "12.x"
+      - uses: actions/checkout@v1
+      - uses: actions/setup-java@v1
+        with:
+          java-version: "12.x"
 
-      # # Setup the flutter environment.
-      # - uses: subosito/flutter-action@v1
-      #   with:
-      #     channel: "stable" # 'dev', 'alpha', default to: 'stable'
-      #     # flutter-version: "2.10.3" # you can also specify exact version of flutter
+      # Setup the flutter environment.
+      - uses: subosito/flutter-action@v1
+        with:
+          channel: "stable" # 'dev', 'alpha', default to: 'stable'
+          # flutter-version: "2.10.3" # you can also specify exact version of flutter
 
-      # # Get flutter dependencies.
-      # - run: flutter pub get
+      # Get flutter dependencies.
+      - run: flutter pub get
 
-      # #! [ IF NEEDED ] Statically analyze the Dart code for any errors.
-      # # - run: flutter analyze .
+      #! [ IF NEEDED ] Statically analyze the Dart code for any errors.
+      # - run: flutter analyze .
 
-      # #! [ IF NEEDED ] Run widget tests for our flutter project.
-      # # - run: flutter test
+      #! [ IF NEEDED ] Run widget tests for our flutter project.
+      # - run: flutter test
 
-      # ## Build apk.
-      # - run: flutter build apk --release
+      ## Build apk.
+      - run: flutter build apk --release
 
-      - name: Get Output File
-        run: echo "releae the apk " -> release.apk
-      - name: Get Output File
-        id: build_step
-        run: |
-          echo "::set-output name=release_apk::release.apk" 
       # Upload generated apk to the artifacts.
       - name: upload-artifact
         uses: actions/upload-artifact@v1
         with:
-          name: release-apk
+          name: release.apk
           path: release.apk
 
   upload:
     name: Uploading the Apk
     needs: build
-    # This job will run on ubuntu virtual machine
     runs-on: ubuntu-latest
+    outputs:
+      sharable_link: ${{ steps.link_step.outputs.sharable_link }}
     steps:
       - name: download-artifact
         uses: actions/download-artifact@v3
         with:
-          name: release-apk
+          name: release.apk
       - name: LS
         run: ls
       - name: Upload Apk to Google Drive
@@ -80,6 +74,11 @@ jobs:
       # Play with the output drive link
       - name: Play with the output drive link
         run: echo ${{ steps.driveUpload.outputs.link }}
+
+      - name: Get Output File
+        id: link_step
+        run: |
+          echo "::set-output name=sharable_link::${{ steps.driveUpload.outputs.link }}" 
 
   #  send_email
   send_mail:
@@ -108,7 +107,7 @@ jobs:
           # Optional whether this connection use TLS (default is true if server_port is 465)
           secure: true
           # Optional plain body:
-          body: Build for ${{github.repository}} - ${{ steps.driveUpload.outputs.link }} completed successfully!
+          body: Build for ${{github.repository}} - ${{ needs.upload.outputs.sharable_link }} completed successfully!
 
           attachments: build/app/outputs/apk/release/release.zip
           # Optional priority: 'high', 'normal' (default) or 'low'
