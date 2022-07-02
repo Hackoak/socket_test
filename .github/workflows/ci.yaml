@@ -42,18 +42,18 @@ jobs:
       # ## Build apk.
       # - run: flutter build apk --release
 
-      # # Upload generated apk to the artifacts.
-      # - uses: actions/upload-artifact@v1
-      #   with:
-      #     name: release-apk
-      #     path: build/app/outputs/apk/release/app-release.apk
-
       - name: Get Output File
         run: echo "releae the apk " -> release.apk
       - name: Get Output File
         id: build_step
         run: |
           echo "::set-output name=release_apk::release.apk" 
+      # Upload generated apk to the artifacts.
+      - name: upload-artifact
+      - uses: actions/upload-artifact@v1
+        with:
+          name: release-apk
+          path: release.apk
 
   upload:
     name: Uploading the Apk
@@ -61,6 +61,10 @@ jobs:
     # This job will run on ubuntu virtual machine
     runs-on: ubuntu-latest
     steps:
+      - name: Upload Apk to Google Drive
+      - uses: actions/download-artifact@v3
+        with:
+          name: release-apk
       - name: Upload Apk to Google Drive
         uses: Hackoak/g-drive-upload-and-gel-link-action@tonest
         id: driveUpload
