@@ -3,9 +3,6 @@ name: Flutter Apk CI
 # This workflow is triggered on pull_request to [ master ] to the repository.
 on:
   push:
-    # Sequence of patterns matched against refs/heads
-    branches:
-      - master
     # Sequence of patterns matched against refs/tags
     tags:
       - v*
