@@ -137,7 +137,7 @@ jobs:
           priority: normal
 
   upload_release_version:
-    name: Uploading the Apk
+    name: Releasing the Apk
     runs-on: ubuntu-latest
     needs: build
     if: ${{ github.ref_type == 'tag' }}
