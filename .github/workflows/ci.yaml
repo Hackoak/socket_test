@@ -77,6 +77,8 @@ jobs:
           name: ${{ steps.naming-release.outputs.file_name }}
           path: release.apk
           # path: build/app/outputs/apk/release/app-release.apk
+      - name: setting the name
+        run: echo "::set-output name=file_name::${{ steps.naming-release.outputs.file_name }}" 
 
   upload:
     name: Uploading the Apk
