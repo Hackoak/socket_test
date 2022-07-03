@@ -62,10 +62,10 @@ jobs:
           version="${{ steps.step_version.outputs.data }}"
           IFS='+'
           read -ra arr <<< "$version"
-          printf "name = ${arr[0]}"
-          VERSION="${{arr[0]}}"
-          FILENAME="${{ env.app_name }} - ${{ steps.step_version.outputs.data }}.apk"
-          echo "${{FILENAME}}" 
+          printf "name = ${arr[0]}->"
+          VERSION="${arr[0]}"
+          FILENAME="${{ env.app_name }} - ${VERSION}.apk"
+          echo "${FILENAME}" 
           echo "::set-output name=version::${{ steps.step_version.outputs.data }}" 
           echo "::set-output name=file_name::$FILENAME" 
       

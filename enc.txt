@@ -1,1 +1,16 @@
-test3
+Run echo "1.0.1-beta+1"
+  echo "1.0.1-beta+1"
+  version="1.0.1-beta+1"
+  IFS='+'
+  read -ra arr <<< "$version"
+  printf "name = ${arr[0]}"
+  VERSION="${arr[0]}"
+  FILENAME="Socket test - 1.0.1-beta+1.apk"
+  echo "$FILENAME" 
+  echo "::set-output name=version::1.0.1-beta+1" 
+  echo "::set-output name=file_name::Socket test - 1.0.1-beta+1" 
+  shell: /usr/bin/bash -e {0}
+  env:
+    app_name: Socket test
+1.0.1-beta+1
+name = 1.0.1-betaSocket test - 1.0.1-beta+1.apk
