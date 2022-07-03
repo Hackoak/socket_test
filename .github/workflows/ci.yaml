@@ -58,13 +58,11 @@ jobs:
       - name: Naming the release
         id: naming-release
         run: |
-          echo "${{ steps.step_version.outputs.data }}"
           version="${{ steps.step_version.outputs.data }}"
           IFS='+'
           read -ra arr <<< "$version"
           VERSION="${arr[0]}"
           FILENAME="${{ env.app_name }}-${VERSION}.apk"
-          echo "${FILENAME}" 
           echo "::set-output name=version::${{ steps.step_version.outputs.data }}" 
           echo "::set-output name=fileName::${FILENAME}" 
       
@@ -94,6 +92,7 @@ jobs:
         run: |
           echo ${{ needs.build.outputs.version }}
           echo ${{ needs.build.outputs.file_name }}
+          ls
 
       - name: Upload Apk to Google Drive
         uses: Hackoak/g-drive-upload-and-gel-link-action@tonest
