@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.step_version.outputs.version }}
-      file_name: ${{ steps.naming-release.outputs.file_name }}
+      file_name: ${{ steps.file.outputs.file_name }}
     steps:
       # Setup Java environment in order to build the Android app.
       - uses: actions/checkout@v1
@@ -78,6 +78,7 @@ jobs:
           path: release.apk
           # path: build/app/outputs/apk/release/app-release.apk
       - name: setting the name
+        id: file
         run: echo "::set-output name=file_name::${{ steps.naming-release.outputs.fileName }}" 
 
   upload:
