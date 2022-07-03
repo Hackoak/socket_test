@@ -78,7 +78,7 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: ${{ steps.naming-release.outputs.fileName }}
-          path: release.apk
+          path: "${{ steps.naming-release.outputs.fileName }}.apk"
           # path: build/app/outputs/apk/release/app-release.apk
 
   upload:
