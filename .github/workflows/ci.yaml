@@ -44,10 +44,10 @@ jobs:
 
       # ## Build apk.
       # - run: flutter build apk --release
-        
+
       - name: making apk
         run: echo "testing" -> release.apk
-        
+
       - name: Get the version
         id: step_version
         uses: KJ002/read-yaml@main # You may wish to replace main with a version tag such as '1.6' etc.
@@ -64,10 +64,15 @@ jobs:
           VERSION="${arr[0]}"
           FILENAME="${{ env.app_name }}-${VERSION}.apk"
           echo "::set-output name=version::${{ steps.step_version.outputs.data }}" 
-          echo "::set-output name=fileName::${FILENAME}" 
-      
-        
+          echo "::set-output name=fileName::${FILENAME}"
 
+      - name: rename artifacts
+        run: |
+          ls
+          cp "release.apk" "${{ steps.naming-release.outputs.fileName }}.apk"
+          ls
+
+      # cp "/build/app/outputs/flutter-apk/app-release.apk" "/build/app/outputs/flutter-apk/${{ steps.naming-release.outputs.fileName }}.apk"
       # Upload generated apk to the artifacts.
       - name: upload-artifact
         uses: actions/upload-artifact@v1
@@ -107,7 +112,7 @@ jobs:
       - name: Get Output File
         id: link_step
         run: |
-          echo "::set-output name=sharable_link::${{ steps.driveUpload.outputs.link }}" 
+          echo "::set-output name=sharable_link::${{ steps.driveUpload.outputs.link }}"
 
   #  send_email
   send_mail:
@@ -148,4 +153,3 @@ jobs:
         with:
           artifacts: release.apk
           token: ${{ secrets.TOKEN }}
-
