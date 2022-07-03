@@ -62,7 +62,6 @@ jobs:
           version="${{ steps.step_version.outputs.data }}"
           IFS='+'
           read -ra arr <<< "$version"
-          printf "name = ${arr[0]}->"
           VERSION="${arr[0]}"
           FILENAME="${{ env.app_name }} - ${VERSION}.apk"
           echo "${FILENAME}" 
@@ -90,6 +89,9 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: ${{ needs.build.outputs.file_name }}
+
+      - name: checking the name
+        run: echo ${{ needs.build.outputs.file_name }}
 
       - name: Upload Apk to Google Drive
         uses: Hackoak/g-drive-upload-and-gel-link-action@tonest
