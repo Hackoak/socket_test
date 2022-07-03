@@ -10,7 +10,7 @@ on:
     tags:
       - v*
 env:
-  app_name: Socket test
+  app_name: Socket_test
 
 jobs:
   build:
