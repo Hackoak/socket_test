@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.step_version.outputs.version }}
-      file_name: ${{ steps.step_version.outputs.file_name }}
+      file_name: ${{ steps.naming-release.outputs.file_name }}
     steps:
       # Setup Java environment in order to build the Android app.
       - uses: actions/checkout@v1
