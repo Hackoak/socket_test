@@ -1,20 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:socket_io_test/IndividualPage.dart';  
-import 'dart:io';
 
-import 'package:socket_io_test/home.dart';
-
-class MyHttpOverrides extends HttpOverrides {
-  @override
-  HttpClient createHttpClient(SecurityContext? context) {
-    return super.createHttpClient(context)
-      ..badCertificateCallback =
-          (X509Certificate cert, String host, int port) => true;
-  }
-}
 
 void main() {
-  HttpOverrides.global =  MyHttpOverrides();
   runApp( const MyApp());
 }
 
@@ -30,7 +17,7 @@ class MyApp extends StatelessWidget {
        
         primarySwatch: Colors.blue,
       ),
-      home:   MyHomePage(),
+      home:  Scaffold( body:Text('this is tst')),
     );
   }
 }
